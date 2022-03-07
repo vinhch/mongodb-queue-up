@@ -1,6 +1,6 @@
 # mongodb-queue-up #
 
-[![Build Status](https://travis-ci.org/mhassan1/mongodb-queue-up.png)](https://travis-ci.org/mhassan1/mongodb-queue-up) [![NPM](https://nodei.co/npm/mongodb-queue-up.png?mini=true)](https://nodei.co/npm/mongodb-queue-up/)
+[![Build Status](https://app.travis-ci.com/mhassan1/mongodb-queue-up.svg?branch=main)](https://app.travis-ci.com/github/mhassan1/mongodb-queue-up) [![NPM](https://nodei.co/npm/mongodb-queue-up.png?mini=true)](https://nodei.co/npm/mongodb-queue-up/)
 
 This is a fork of [mongodb-queue@4](https://www.npmjs.com/package/mongodb-queue/v/4.0.0) that adds support for MongoDB Driver v4.
 
@@ -433,6 +433,10 @@ We may add the ability for each function to return a promise in the future so it
 async/await.
 
 ## Releases ##
+
+### 5.0.1 (2022-03-07) ###
+
+* [DOC] Fixed travis badge
 
 ### 5.0.0 (2022-03-07) ###
 
