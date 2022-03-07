@@ -1,13 +1,17 @@
-# mongodb-queue #
+# mongodb-queue-up #
 
-[![Build Status](https://travis-ci.org/chilts/mongodb-queue.png)](https://travis-ci.org/chilts/mongodb-queue) [![NPM](https://nodei.co/npm/mongodb-queue.png?mini=true)](https://nodei.co/npm/mongodb-queue/)
+[![Build Status](https://travis-ci.org/mhassan1/mongodb-queue-up.png)](https://travis-ci.org/mhassan1/mongodb-queue-up) [![NPM](https://nodei.co/npm/mongodb-queue-up.png?mini=true)](https://nodei.co/npm/mongodb-queue-up/)
+
+This is a fork of [mongodb-queue@4](https://www.npmjs.com/package/mongodb-queue/v/4.0.0) that adds support for MongoDB Driver v4.
 
 A really light-weight way to create queues with a nice API if you're already
 using MongoDB.
 
-Now compatible with the MongoDB v3 driver.
+Now compatible with the MongoDB v4 driver.
 
-For MongoDB v2 driver use mongodb-queue@3.
+For MongoDB v3 driver use [mongodb-queue@4](https://www.npmjs.com/package/mongodb-queue/v/4.0.0).
+
+For MongoDB v2 driver use [mongodb-queue@3](https://www.npmjs.com/package/mongodb-queue/v/3.1.0).
 
 **NOTE**: This package is considered feature complete and **STABLE** hence there is not a whole lot of development on
 it though it is being used extensively. Use it with all your might and let us know of any problems - it should be
@@ -19,10 +23,10 @@ Create a connection to your MongoDB database, and use it to create a queue objec
 
 ```js
 var mongodb = require('mongodb')
-var mongoDbQueue = require('mongodb-queue')
+var mongoDbQueue = require('mongodb-queue-up')
 
 const url = 'mongodb://localhost:27017/'
-const client = new mongodb.MongoClient(url, { useNewUrlParser: true })
+const client = new mongodb.MongoClient(url)
 
 client.connect(err => {
   const db = client.db('test')
@@ -99,7 +103,7 @@ and a set of opts. The MongoDB collection used is the same name as the name
 passed in:
 
 ```
-var mongoDbQueue = require('mongodb-queue')
+var mongoDbQueue = require('mongodb-queue-up')
 
 // an instance of a queue
 var queue1 = mongoDbQueue(db, 'a-queue')
@@ -430,6 +434,10 @@ async/await.
 
 ## Releases ##
 
+### 5.0.0 (2022-03-07) ###
+
+* [NEW] Added support for mongodb driver v4
+
 ### 4.0.0 (2019-02-20) ###
 
 * [NEW] Updated entire codebase to be compatible with the mongodb driver v3
@@ -520,41 +528,8 @@ async/await.
 * [NEW] set your own MongoDB Collection name
 * [NEW] set a visibility timeout on a queue
 
-## Author ##
-
-```
-$ npx chilts
-
-   ╒════════════════════════════════════════════════════╕
-   │                                                    │
-   │   Andrew Chilton (Personal)                        │
-   │   -------------------------                        │
-   │                                                    │
-   │          Email : andychilton@gmail.com             │
-   │            Web : https://chilts.org                │
-   │        Twitter : https://twitter.com/andychilton   │
-   │         GitHub : https://github.com/chilts         │
-   │         GitLab : https://gitlab.org/chilts         │
-   │                                                    │
-   │   Apps Attic Ltd (My Company)                      │
-   │   ---------------------------                      │
-   │                                                    │
-   │          Email : chilts@appsattic.com              │
-   │            Web : https://appsattic.com             │
-   │        Twitter : https://twitter.com/AppsAttic     │
-   │         GitLab : https://gitlab.com/appsattic      │
-   │                                                    │
-   │   Node.js / npm                                    │
-   │   -------------                                    │
-   │                                                    │
-   │        Profile : https://www.npmjs.com/~chilts     │
-   │           Card : $ npx chilts                      │
-   │                                                    │
-   ╘════════════════════════════════════════════════════╛
-```
-
 ## License ##
 
-MIT - http://chilts.mit-license.org/2014/
+MIT
 
 (Ends)
