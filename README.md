@@ -437,6 +437,7 @@ async/await.
 ### 5.0.0 (2022-03-07) ###
 
 * [NEW] Added support for mongodb driver v4
+* [NEW] Added typescript types
 
 ### 4.0.0 (2019-02-20) ###
 
