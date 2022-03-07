@@ -1,7 +1,7 @@
 const mongodb = require('mongodb')
 
 const url = 'mongodb://localhost:27017/'
-const dbName = 'mongodb-queue'
+const dbName = 'mongodb-queue-up'
 
 const collections = [
   'default',
@@ -19,7 +19,7 @@ const collections = [
 ]
 
 module.exports = function(callback) {
-  const client = new mongodb.MongoClient(url, { useNewUrlParser: true })
+  const client = new mongodb.MongoClient(url)
 
   client.connect(err => {
     // we can throw since this is test-only

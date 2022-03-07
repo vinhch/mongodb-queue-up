@@ -1,16 +1,5 @@
-/**
- *
- * mongodb-queue.js - Use your existing MongoDB as a local queue.
- *
- * Copyright (c) 2014 Andrew Chilton
- * - http://chilts.org/
- * - andychilton@gmail.com
- *
- * License: http://chilts.mit-license.org/2014/
- *
- **/
-
 var crypto = require('crypto')
+var EventEmitter = require('events').EventEmitter
 
 // some helper functions
 function id() {
@@ -32,10 +21,13 @@ module.exports = function(db, name, opts) {
 // the Queue object itself
 function Queue(db, name, opts) {
     if ( !db ) {
-        throw new Error("mongodb-queue: provide a mongodb.MongoClient.db")
+        throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db")
+    }
+    if ( db instanceof EventEmitter ) {
+        throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db from mongodb@4")
     }
     if ( !name ) {
-        throw new Error("mongodb-queue: provide a queue name")
+        throw new Error("mongodb-queue-up: provide a queue name")
     }
     opts = opts || {}
 
@@ -94,7 +86,7 @@ Queue.prototype.add = function(payload, opts, callback) {
     self.col.insertMany(msgs, function(err, results) {
         if (err) return callback(err)
         if (payload instanceof Array) return callback(null, '' + results.insertedIds)
-        callback(null, '' + results.ops[0]._id)
+        callback(null, '' + results.insertedIds[0])
     })
 }
 
@@ -121,7 +113,7 @@ Queue.prototype.get = function(opts, callback) {
         }
     }
 
-    self.col.findOneAndUpdate(query, update, { sort: sort, returnOriginal : false }, function(err, result) {
+    self.col.findOneAndUpdate(query, update, { sort: sort, returnDocument : 'after' }, function(err, result) {
         if (err) return callback(err)
         var msg = result.value
         if (!msg) return callback()
@@ -175,7 +167,7 @@ Queue.prototype.ping = function(ack, opts, callback) {
             visible : nowPlusSecs(visibility)
         }
     }
-    self.col.findOneAndUpdate(query, update, { returnOriginal : false }, function(err, msg, blah) {
+    self.col.findOneAndUpdate(query, update, { returnDocument : 'after' }, function(err, msg, blah) {
         if (err) return callback(err)
         if ( !msg.value ) {
             return callback(new Error("Queue.ping(): Unidentified ack  : " + ack))
@@ -197,7 +189,7 @@ Queue.prototype.ack = function(ack, callback) {
             deleted : now(),
         }
     }
-    self.col.findOneAndUpdate(query, update, { returnOriginal : false }, function(err, msg, blah) {
+    self.col.findOneAndUpdate(query, update, { returnDocument : 'after' }, function(err, msg, blah) {
         if (err) return callback(err)
         if ( !msg.value ) {
             return callback(new Error("Queue.ack(): Unidentified ack : " + ack))
