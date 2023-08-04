@@ -1,6 +1,6 @@
-const mongodb = require('mongodb')
+const mongodb = require(`mongodb${process.argv[2]}`)
 
-const url = 'mongodb://localhost:27017/'
+const url = 'mongodb://127.0.0.1:27017/'
 const dbName = 'mongodb-queue-up'
 
 const collections = [
@@ -21,16 +21,13 @@ const collections = [
 module.exports = function(callback) {
   const client = new mongodb.MongoClient(url)
 
-  client.connect(err => {
-    // we can throw since this is test-only
-    if (err) throw err
-
+  client.connect().then(() => {
     const db = client.db(dbName)
 
     // empty out some collections to make sure there are no messages
     let done = 0
     collections.forEach((col) => {
-      db.collection(col).deleteMany(() => {
+      db.collection(col).deleteMany().then(() => {
         done += 1
         if ( done === collections.length ) {
           callback(client, db)
