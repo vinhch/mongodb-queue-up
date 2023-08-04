@@ -1,6 +1,6 @@
 {
   "name": "mongodb-queue-up",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Message queues which uses MongoDB.",
   "main": "mongodb-queue.js",
   "types": "mongodb-queue.d.ts",
@@ -9,16 +9,19 @@
     "mongodb-queue.d.ts"
   ],
   "scripts": {
-    "test": "set -e; for FILE in test/*.js; do echo --- $FILE ---; node $FILE; done"
+    "test": "npm run test4 && npm run test5",
+    "test4": "set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v4 ---; node $FILE 4; done",
+    "test5": "set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v5 ---; node $FILE 5; done"
   },
   "dependencies": {},
   "devDependencies": {
     "async": "^2.6.2",
-    "mongodb": "^4.4.1",
+    "mongodb4": "npm:mongodb@^4.4.1",
+    "mongodb5": "npm:mongodb@^5.7.0",
     "tape": "^4.10.1"
   },
   "peerDependencies": {
-    "mongodb": "^4"
+    "mongodb": "^4 || ^5"
   },
   "homepage": "https://github.com/mhassan1/mongodb-queue-up",
   "repository": {
