@@ -468,6 +468,7 @@ queue.clean((err) => {
 ### Notes about Numbers ###
 
 If you add up `.size() + .inFlight() + .done()` then you should get `.total()`
+(excluding any messages added with a `delay`)
 but this will only be approximate since these are different operations hitting the database
 at slightly different times. Hence, a message or two might be counted twice or not at all
 depending on message turnover at any one time. You should not rely on these numbers for
