@@ -25,7 +25,7 @@ function Queue(db, name, opts) {
         throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db")
     }
     if ( db instanceof EventEmitter ) {
-        throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db from mongodb@4")
+        throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db from mongodb@4 or higher")
     }
     if ( !name ) {
         throw new Error("mongodb-queue-up: provide a queue name")
