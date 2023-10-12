@@ -370,16 +370,77 @@ queue.size((err, count) => {
 })
 ```
 
+Use `listWaiting` to get the messages, themselves.
+
+### .listWaiting() ###
+
+Returns the list of messages that are waiting in the queue.
+
+```js
+queue.listWaiting((err, messages) => {
+    console.log('This queue has %d current messages', messages.length)
+})
+```
+
+The message structure will match `get`.
+
+Use `size` to just get the count.
+
 ### .inFlight() ###
 
-Returns the total number of messages that are currently in flight. ie. that
-have been received but not yet acked:
+Returns the total number of messages that are currently in flight, i.e. that
+have been retrieved, not yet acknowledged, but are being pinged:
 
 ```js
 queue.inFlight((err, count) => {
     console.log('A total of %d messages are currently being processed', count)
 })
 ```
+
+Use `listInFlight` to get the messages, themselves.
+
+### .listInFlight() ###
+
+Returns the list of messages that are currently in flight, i.e. that
+have been retrieved, not yet acknowledged, but are being pinged:
+
+```js
+queue.listInFlight((err, messages) => {
+    console.log('A total of %d messages are currently being processed', messages.length)
+})
+```
+
+The message structure will match `get`.
+
+Use `inFlight` to just get the count.
+
+### .incomplete() ###
+
+Returns the total number of messages that are currently incomplete, i.e. that
+have been retrieved, not yet acknowledged, but are NOT being pinged:
+
+```js
+queue.incomplete((err, count) => {
+    console.log('A total of %d messages are currently incomplete', count)
+})
+```
+
+Use `listIncomplete` to get the messages, themselves.
+
+### .listIncomplete() ###
+
+Returns the list of messages that are currently incomplete, i.e. that
+have been retrieved, not yet acknowledged, but are NOT being pinged:
+
+```js
+queue.listIncomplete((err, messages) => {
+    console.log('A total of %d messages are currently incomplete', messages.length)
+})
+```
+
+The message structure will match `get`.
+
+Use `incomplete` to just get the count.
 
 ### .done() ###
 
@@ -433,6 +494,10 @@ We may add the ability for each function to return a promise in the future so it
 async/await.
 
 ## Releases ##
+
+### 5.3.0 (2023-10-12) ###
+
+* [NEW] Added `listWaiting`, `listInFlight`, `incomplete`, and `listIncomplete` methods
 
 ### 5.2.0 (2023-09-11) ###
 

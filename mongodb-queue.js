@@ -15,6 +15,16 @@ function nowPlusSecs(secs) {
     return (new Date(Date.now() + secs * 1000)).toISOString()
 }
 
+function externalMessageRepresentation(msg) {
+    return {
+        // convert '_id' to an 'id' string
+        id      : '' + msg._id,
+        ack     : msg.ack,
+        payload : msg.payload,
+        tries   : msg.tries,
+    }
+}
+
 module.exports = function(db, name, opts) {
     return new Queue(db, name, opts)
 }
@@ -65,6 +75,9 @@ function Queue(db, name, opts) {
       }),
       countDocuments1: callbackify(function(query) {
           return self.col.countDocuments(query)
+      }),
+      findSortToArray: callbackify(function(query, sort) {
+          return self.col.find(query).sort(sort).toArray()
       })
     }
 }
@@ -145,13 +158,7 @@ Queue.prototype.get = function(opts, callback) {
         if (!msg) return callback()
 
         // convert to an external representation
-        msg = {
-            // convert '_id' to an 'id' string
-            id      : '' + msg._id,
-            ack     : msg.ack,
-            payload : msg.payload,
-            tries   : msg.tries,
-        }
+        msg = externalMessageRepresentation(msg)
         // if we have a deadQueue, then check the tries, else don't
         if ( self.deadQueue ) {
             // check the tries
@@ -257,6 +264,23 @@ Queue.prototype.size = function(callback) {
     })
 }
 
+Queue.prototype.listWaiting = function(callback) {
+    var self = this
+
+    var query = {
+        deleted : null,
+        visible : { $lte : now() },
+    }
+    var sort = {
+        _id : 1
+    }
+
+    self._ops.findSortToArray(query, sort, function(err, messages) {
+        if (err) return callback(err)
+        callback(null, messages.map(externalMessageRepresentation))
+    })
+}
+
 Queue.prototype.inFlight = function(callback) {
     var self = this
 
@@ -269,6 +293,55 @@ Queue.prototype.inFlight = function(callback) {
     self._ops.countDocuments1(query, function(err, count) {
         if (err) return callback(err)
         callback(null, count)
+    })
+}
+
+Queue.prototype.listInFlight = function(callback) {
+    var self = this
+
+    var query = {
+        ack     : { $exists : true },
+        visible : { $gt : now() },
+        deleted : null,
+    }
+    var sort = {
+        _id : 1
+    }
+
+    self._ops.findSortToArray(query, sort, function(err, messages) {
+        if (err) return callback(err)
+        callback(null, messages.map(externalMessageRepresentation))
+    })
+}
+
+Queue.prototype.incomplete = function(callback) {
+    var self = this
+
+    var query = {
+        ack     : { $exists : true },
+        deleted : null,
+    }
+
+    self._ops.countDocuments1(query, function(err, count) {
+        if (err) return callback(err)
+        callback(null, count)
+    })
+}
+
+Queue.prototype.listIncomplete = function(callback) {
+    var self = this
+
+    var query = {
+        ack     : { $exists : true },
+        deleted : null,
+    }
+    var sort = {
+        _id : 1
+    }
+
+    self._ops.findSortToArray(query, sort, function(err, messages) {
+        if (err) return callback(err)
+        callback(null, messages.map(externalMessageRepresentation))
     })
 }
 
