@@ -44,6 +44,32 @@ setup(function(client, db) {
                     })
                 },
                 function(next) {
+                    queue.incomplete(function(err, count) {
+                        t.equal(count, 0, 'There are no incomplete messages')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listWaiting(function(err, messages) {
+                        t.equal(messages.length, 1, 'List of waiting in queue is one')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listInFlight(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no inFlight messages')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listIncomplete(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no incomplete messages')
+                        next()
+                    })
+                },
+                function(next) {
                     queue.done(function(err, count) {
                         t.equal(count, 0, 'There are no done messages')
                         next()
@@ -75,6 +101,34 @@ setup(function(client, db) {
                     })
                 },
                 function(next) {
+                    queue.incomplete(function(err, count) {
+                        t.equal(count, 1, 'There is one incomplete message')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listWaiting(function(err, messages) {
+                        t.equal(messages.length, 0, 'List of waiting in queue is now zero (ie. none to come)')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listInFlight(function(err, messages) {
+                        t.equal(messages.length, 1, 'There is one inflight message')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listIncomplete(function(err, messages) {
+                        t.equal(messages.length, 1, 'There is one incomplete message')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
+                        next()
+                    })
+                },
+                function(next) {
                     queue.done(function(err, count) {
                         t.equal(count, 0, 'There are still no done messages')
                         next()
@@ -102,6 +156,30 @@ setup(function(client, db) {
                 function(next) {
                     queue.inFlight(function(err, count) {
                         t.equal(count, 0, 'There are no inflight messages anymore')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.incomplete(function(err, count) {
+                        t.equal(count, 0, 'There are no incomplete messages anymore')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listWaiting(function(err, messages) {
+                        t.equal(messages.length, 0, 'List of waiting in queue is still zero (ie. none to come)')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listInFlight(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no inflight messages anymore')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listIncomplete(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no incomplete messages anymore')
                         next()
                     })
                 },
@@ -154,6 +232,32 @@ setup(function(client, db) {
                     })
                 },
                 function(next) {
+                    queue.incomplete(function(err, count) {
+                        t.equal(count, 0, 'There are no incomplete messages')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listWaiting(function(err, messages) {
+                        t.equal(messages.length, 1, 'List of waiting in queue is one')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listInFlight(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no inFlight messages')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listIncomplete(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no incomplete messages')
+                        next()
+                    })
+                },
+                function(next) {
                     queue.done(function(err, count) {
                         t.equal(count, 0, 'There are no done messages')
                         next()
@@ -181,6 +285,34 @@ setup(function(client, db) {
                 function(next) {
                     queue.inFlight(function(err, count) {
                         t.equal(count, 0, 'There are no inflight messages again')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.incomplete(function(err, count) {
+                        t.equal(count, 1, 'There is one incomplete message')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listWaiting(function(err, messages) {
+                        t.equal(messages.length, 1, 'List of waiting in queue is still at one')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listInFlight(function(err, messages) {
+                        t.equal(messages.length, 0, 'There are no inflight messages again')
+                        next()
+                    })
+                },
+                function(next) {
+                    queue.listIncomplete(function(err, messages) {
+                        t.equal(messages.length, 1, 'List of incomplete is at one')
+                        t.ok(messages[0].id, 'Got a msg.id (sanity check)')
+                        t.equal(messages[0].payload, 'Hello, World!', 'Got the right payload')
                         next()
                     })
                 },

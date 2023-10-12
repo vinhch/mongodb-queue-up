@@ -19,7 +19,11 @@ declare namespace mongodbQueue {
     clean(callback: QueueCallback<any>): void;
     total(callback: QueueCallback<number>): void;
     size(callback: QueueCallback<number>): void;
+    listWaiting(callback: QueueCallback<QueueMessage[]>): void;
     inFlight(callback: QueueCallback<number>): void;
+    listInFlight(callback: QueueCallback<QueueMessage[]>): void;
+    incomplete(callback: QueueCallback<number>): void;
+    listIncomplete(callback: QueueCallback<QueueMessage[]>): void;
     done(callback: QueueCallback<number>): void;
   }
 
