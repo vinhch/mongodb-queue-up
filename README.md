@@ -496,6 +496,10 @@ async/await.
 
 ## Releases ##
 
+### 5.4.0 (2023-10-12) ###
+
+* [NEW] Replaced `deleted:{$exists:true}` with `deleted:{$ne:null}` for better index usage
+
 ### 5.3.0 (2023-10-12) ###
 
 * [NEW] Added `listWaiting`, `listInFlight`, `incomplete`, and `listIncomplete` methods

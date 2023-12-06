@@ -235,7 +235,7 @@ Queue.prototype.clean = function(callback) {
     var self = this
 
     var query = {
-        deleted : { $exists : true },
+        deleted : { $ne : null },
     }
 
     self._ops.deleteMany1(query, callback)
@@ -349,7 +349,7 @@ Queue.prototype.done = function(callback) {
     var self = this
 
     var query = {
-        deleted : { $exists : true },
+        deleted : { $ne : null },
     }
 
     self._ops.countDocuments1(query, function(err, count) {
