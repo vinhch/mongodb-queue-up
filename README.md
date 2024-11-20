@@ -1,8 +1,8 @@
 # mongodb-queue-up #
 
-[![Build Status](https://app.travis-ci.com/mhassan1/mongodb-queue-up.svg?branch=main)](https://app.travis-ci.com/github/mhassan1/mongodb-queue-up) [![NPM](https://nodei.co/npm/mongodb-queue-up.png?mini=true)](https://nodei.co/npm/mongodb-queue-up/)
+[![Test Status](https://github.com/vinhch/mongodb-queue-up/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/vinhch/mongodb-queue-up/actions/workflows/test.yml)
 
-This is a fork of [mongodb-queue@4](https://www.npmjs.com/package/mongodb-queue/v/4.0.0) that adds support for MongoDB Driver v4, v5, and v6.
+This is a fork of [mongodb-queue@4](https://www.npmjs.com/package/mongodb-queue/v/4.0.0) that adds support for Promise and MongoDB Driver v4, v5, v6.
 
 A really light-weight way to create queues with a nice API if you're already
 using MongoDB.

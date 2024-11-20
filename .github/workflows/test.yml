@@ -1,0 +1,63 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  # push:
+  #   branches:
+  #     - main
+
+  workflow_dispatch: # Allows manually triggering
+    inputs:
+      runOn:
+        required: true
+        type: choice
+        default: ubuntu-latest
+        description: Runs on
+        options:
+          - ubuntu-latest
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_test_with_driver_4:
+    runs-on: ${{  github.event.inputs.runOn || inputs.runOn || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup_env
+
+      - name: Run tests
+        if: success()
+        run: npm run test4
+        working-directory: ./
+
+  run_test_with_driver_5:
+    runs-on: ${{  github.event.inputs.runOn || inputs.runOn || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup_env
+
+      - name: Run tests
+        if: success()
+        run: npm run test5
+        working-directory: ./
+
+  run_test_with_driver_6:
+    runs-on: ${{  github.event.inputs.runOn || inputs.runOn || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup_env
+
+      - name: Run tests
+        if: success()
+        run: npm run test6
+        working-directory: ./

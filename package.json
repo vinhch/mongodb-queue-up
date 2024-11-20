@@ -10,15 +10,16 @@
   ],
   "scripts": {
     "test": "npm run test4 && npm run test5 && npm run test6",
-    "test4": "set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v4 ---; node $FILE 4; done",
-    "test5": "set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v5 ---; node $FILE 5; done",
-    "test6": "set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v6 ---; node $FILE 6; done"
+    "test4": "(set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v4 ---; node $FILE 4; done) | tap-spec-emoji",
+    "test5": "(set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v5 ---; node $FILE 5; done) | tap-spec-emoji",
+    "test6": "(set -e; for FILE in test/*.js; do echo --- $FILE - mongodb v6 ---; node $FILE 6; done) | tap-spec-emoji"
   },
   "devDependencies": {
     "async": "^2.6.2",
     "mongodb4": "npm:mongodb@^4.4.1",
     "mongodb5": "npm:mongodb@^5.7.0",
     "mongodb6": "npm:mongodb@^6.0.0",
+    "tap-spec-emoji": "^6.1.2",
     "tape": "^5.9.0"
   },
   "peerDependencies": {
