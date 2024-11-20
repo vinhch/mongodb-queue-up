@@ -491,6 +491,20 @@ queue.clean((err) => {
 })
 ```
 
+### .kill() ###
+
+If the dead queue is available, remove a message from the active queue immediately
+and add it to the dead queue. This is useful for messages that you know cannot be
+completed regardless of retries:
+
+```js
+queue.kill(msg, (err, msg) => {
+    if (msg) {
+        // this message has now been removed from the queue
+    }
+})
+```
+
 ### Notes about Numbers ###
 
 If you add up `.size() + .inFlight() + .done()` then you should get `.total()`

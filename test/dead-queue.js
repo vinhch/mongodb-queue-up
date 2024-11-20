@@ -6,13 +6,13 @@ var mongoDbQueue = require('../')
 
 setup(function(client, db) {
 
-    test('first test', function(t) {
+    test('dead-queue: first test', function(t) {
         var queue = mongoDbQueue(db, 'queue', { visibility : 3, deadQueue : 'dead-queue' })
         t.ok(queue, 'Queue created ok')
         t.end()
     });
 
-    test('single message going over 5 tries, should appear on dead-queue', function(t) {
+    test('dead-queue: single message going over 5 tries, should appear on dead-queue', function(t) {
         var deadQueue = mongoDbQueue(db, 'dead-queue')
         var queue = mongoDbQueue(db, 'queue', { visibility : 1, deadQueue : deadQueue })
         var msg
@@ -93,10 +93,9 @@ setup(function(client, db) {
         )
     })
 
-    test('two messages, with first going over 3 tries', function(t) {
+    test('dead-queue: two messages, with first going over 3 tries', function(t) {
         var deadQueue = mongoDbQueue(db, 'dead-queue-2')
         var queue = mongoDbQueue(db, 'queue-2', { visibility : 1, deadQueue : deadQueue, maxRetries : 3 })
-        var msg
         var origId, origId2
 
         async.series(
