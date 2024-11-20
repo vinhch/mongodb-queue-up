@@ -55,30 +55,30 @@ function Queue(db, name, opts) {
 
     var self = this
     this._ops = {
-      createIndex1: callbackify(function(spec) {
-          return self.col.createIndex(spec)
-      }),
-      createIndex2: callbackify(function(spec, opts) {
-          return self.col.createIndex(spec, opts)
-      }),
-      insertMany1: callbackify(function(docs) {
-          return self.col.insertMany(docs)
-      }),
-      findOneAndUpdate3: callbackify(function(query, update, opts) {
-          return self.col.findOneAndUpdate(query, update, opts)
-      }),
-      deleteMany1: callbackify(function(query) {
-          return self.col.deleteMany(query)
-      }),
-      countDocuments0: callbackify(function() {
-          return self.col.countDocuments()
-      }),
-      countDocuments1: callbackify(function(query) {
-          return self.col.countDocuments(query)
-      }),
-      findSortToArray: callbackify(function(query, sort) {
-          return self.col.find(query).sort(sort).toArray()
-      })
+        createIndex1: callbackify(function(spec) {
+            return self.col.createIndex(spec)
+        }),
+        createIndex2: callbackify(function(spec, opts) {
+            return self.col.createIndex(spec, opts)
+        }),
+        insertMany1: callbackify(function(docs) {
+            return self.col.insertMany(docs)
+        }),
+        findOneAndUpdate3: callbackify(function(query, update, opts) {
+            return self.col.findOneAndUpdate(query, update, opts)
+        }),
+        deleteMany1: callbackify(function(query) {
+            return self.col.deleteMany(query)
+        }),
+        countDocuments0: callbackify(function() {
+            return self.col.countDocuments()
+        }),
+        countDocuments1: callbackify(function(query) {
+            return self.col.countDocuments(query)
+        }),
+        findSortToArray: callbackify(function(query, sort) {
+            return self.col.find(query).sort(sort).toArray()
+        })
     }
 }
 
@@ -87,8 +87,8 @@ Queue.prototype.createIndexes = function(callback) {
 
     self._ops.createIndex1({ deleted : 1, visible : 1 }, function(err, indexname) {
         if (err) return callback(err)
-        self._ops.createIndex2({ ack : 1 }, { unique : true, sparse : true }, function(err) {
-            if (err) return callback(err)
+        self._ops.createIndex2({ ack : 1 }, { unique : true, sparse : true }, function(err1) {
+            if (err) return callback(err1)
             callback(null, indexname)
         })
     })
@@ -142,7 +142,7 @@ Queue.prototype.get = function(opts, callback) {
         visible : { $lte : now() },
     }
     var sort = {
-        _id : 1
+        visible : 1
     }
     var update = {
         $inc : { tries : 1 },
@@ -160,22 +160,19 @@ Queue.prototype.get = function(opts, callback) {
         // convert to an external representation
         msg = externalMessageRepresentation(msg)
         // if we have a deadQueue, then check the tries, else don't
-        if ( self.deadQueue ) {
-            // check the tries
-            if ( msg.tries > self.maxRetries ) {
-                // So:
-                // 1) add this message to the deadQueue
-                // 2) ack this message from the regular queue
-                // 3) call ourself to return a new message (if exists)
-                self.deadQueue.add(msg, function(err) {
+        if ( self.deadQueue && msg.tries > self.maxRetries) {
+            // So:
+            // 1) add this message to the deadQueue
+            // 2) ack this message from the regular queue
+            // 3) call ourself to return a new message (if exists)
+            self.deadQueue.add(msg, function(err) {
+                if (err) return callback(err)
+                self.ack(msg.ack, function(err) {
                     if (err) return callback(err)
-                    self.ack(msg.ack, function(err) {
-                        if (err) return callback(err)
-                        self.get(callback)
-                    })
+                    self.get(callback)
                 })
-                return
-            }
+            })
+            return
         }
 
         callback(null, msg)
@@ -272,7 +269,7 @@ Queue.prototype.listWaiting = function(callback) {
         visible : { $lte : now() },
     }
     var sort = {
-        _id : 1
+        visible : 1
     }
 
     self._ops.findSortToArray(query, sort, function(err, messages) {
@@ -305,7 +302,7 @@ Queue.prototype.listInFlight = function(callback) {
         deleted : null,
     }
     var sort = {
-        _id : 1
+        visible : 1
     }
 
     self._ops.findSortToArray(query, sort, function(err, messages) {
@@ -336,7 +333,7 @@ Queue.prototype.listIncomplete = function(callback) {
         deleted : null,
     }
     var sort = {
-        _id : 1
+        visible : 1
     }
 
     self._ops.findSortToArray(query, sort, function(err, messages) {
