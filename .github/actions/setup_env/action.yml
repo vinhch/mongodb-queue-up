@@ -3,18 +3,15 @@ description: 'Setup test environment'
 runs:
   using: composite
   steps:
-    - name: Setup Docker # using mongo:4 for the most compatible with drivers
-      shell: bash
-      run: |
-        docker ps -aq | xargs -r docker stop
-        docker container prune -f
-        docker system prune -f
-        docker run --name test__mongo -p 27017:27017 -d mongo:4
+    - name: Setup MongoDb
+      uses: supercharge/mongodb-github-action@1.11.0
+      with:
+        mongodb-version: '4' # using mongo:4 for compatibility with almost all drivers
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18.20.5' # driver 4,5,6 all support node 18
+        node-version: '18.20.5' # node v18 is the highest supported version of all driver v4,v5,v6
 
     - name: Install dependencies
       shell: bash
