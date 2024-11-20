@@ -8,11 +8,11 @@ function id() {
 }
 
 function now() {
-    return (new Date()).toISOString()
+    return new Date()
 }
 
 function nowPlusSecs(secs) {
-    return (new Date(Date.now() + secs * 1000)).toISOString()
+    return (new Date(Date.now() + secs * 1000))
 }
 
 function externalMessageRepresentation(msg) {
@@ -47,6 +47,7 @@ function Queue(db, name, opts) {
     this.col = db.collection(name)
     this.visibility = opts.visibility || 30
     this.delay = opts.delay || 0
+    this.ttl = opts.ttl || null
 
     if ( opts.deadQueue ) {
         this.deadQueue = opts.deadQueue
@@ -89,7 +90,13 @@ Queue.prototype.createIndexes = function(callback) {
         if (err) return callback(err)
         self._ops.createIndex2({ ack : 1 }, { unique : true, sparse : true }, function(err1) {
             if (err) return callback(err1)
-            callback(null, indexname)
+            if (!self.ttl) {
+                return callback(null, indexname)
+            }
+            self._ops.createIndex2({ deleted : 1}, { expireAfterSeconds: self.ttl, background: true}, function(err) {
+                if (err) return callback(err)
+                callback(null, indexname)
+            });
         })
     })
 }
@@ -101,7 +108,7 @@ Queue.prototype.add = function(payload, opts, callback) {
         opts = {}
     }
     var delay = opts.delay || self.delay
-    var visible = delay ? (delay instanceof Date ? delay.toISOString() : nowPlusSecs(delay)) : now()
+    var visible = delay ? (delay instanceof Date ? delay : nowPlusSecs(delay)) : now()
 
     var msgs = []
     if (payload instanceof Array) {

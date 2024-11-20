@@ -12,6 +12,8 @@ const collections = [
   'ping',
   'stats1',
   'stats2',
+  'indexes',
+  'ttl',
   'queue',
   'dead-queue',
   'queue-2',

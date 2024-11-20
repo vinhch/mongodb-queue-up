@@ -148,11 +148,11 @@ setup(function(client, db) {
                     })
                 },
                 function(next) {
-                  queue.total(function(err, size) {
-                    t.ok(!err, 'There is no error.')
-                    t.equal(size, 0, 'Queue total is correct')
-                    next()
-                  })
+                    queue.total(function(err, size) {
+                        t.ok(!err, 'There is no error.')
+                        t.equal(size, 0, 'Queue total is correct')
+                        next()
+                    })
                 },
             ],
             function(err) {

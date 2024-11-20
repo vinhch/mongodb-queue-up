@@ -110,7 +110,7 @@ setup(function(client, db) {
                     })
                 },
                 function(next) {
-                    queue.add('Part II', function(err, id) {
+                    queue.add('Part II', {delay: 8}, function(err, id) {
                         t.ok(!err, 'There is no error when adding another message.')
                         t.ok(id, 'Received an id for this message')
                         origId2 = id
@@ -147,12 +147,14 @@ setup(function(client, db) {
                 function(next) {
                     // This is the 4th time, so we SHOULD have moved it to the dead queue
                     // pior to it being returned.
-                    queue.get(function(err, msg) {
-                        t.ok(!err, 'No error when getting the 2nd message')
-                        t.equal(msg.id, origId2, 'Got the ID of the 2nd message')
-                        t.equal(msg.payload, 'Part II', 'Got the same payload as the 2nd message')
-                        next()
-                    })
+                    setTimeout(function() {
+                        queue.get(function(err, msg) {
+                            t.ok(!err, 'No error when getting the 2nd message')
+                            t.equal(msg.id, origId2, 'Got the ID of the 2nd message')
+                            t.equal(msg.payload, 'Part II', 'Got the same payload as the 2nd message')
+                            next()
+                        })
+                    }, 2 * 1000)
                 },
                 function(next) {
                     deadQueue.get(function(err, msg) {

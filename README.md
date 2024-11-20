@@ -102,7 +102,7 @@ To create a queue, call the exported function with the `MongoClient`, the name
 and a set of opts. The MongoDB collection used is the same name as the name
 passed in:
 
-```
+```js
 var mongoDbQueue = require('mongodb-queue-up')
 
 // an instance of a queue
@@ -119,7 +119,7 @@ it's not something you should do.
 
 To pass in options for the queue:
 
-```
+```js
 var resizeQueue = mongoDbQueue(db, 'resize-queue', { visibility : 30, delay : 15 })
 ```
 
@@ -134,7 +134,7 @@ Each queue you create will be it's own collection.
 
 e.g.
 
-```
+```js
 var resizeImageQueue = mongoDbQueue(db, 'resize-image-queue')
 var notifyOwnerQueue = mongoDbQueue(db, 'notify-owner-queue')
 ```
@@ -152,7 +152,7 @@ visibility window.
 You may set this visibility window on a per queue basis. For example, to set the
 visibility to 15 seconds:
 
-```
+```js
 var queue = mongoDbQueue(db, 'queue', { visibility : 15 })
 ```
 
@@ -170,7 +170,7 @@ retrieval 10s after being added.
 
 To delay all messages by 10 seconds, try this:
 
-```
+```js
 var queue = mongoDbQueue(db, 'queue', { delay : 10 })
 ```
 
@@ -180,8 +180,26 @@ If you set `delay` to be a Date it will delay the message until that date.
 
 To delay all messages until January 1st 2077, try this:
 
-```
+```js
 var queue = mongoDbQueue(db, 'queue', { delay : new Date('2077-01-01') })
+```
+
+### ttl - Auto expiry of deleted messages ###
+
+Default: none
+
+Auto expiry of deleted messages from the queue. This can be useful for limiting
+the amount of space used by queues, while still maintaining some level of auditing.
+`ttl` option can be specified, in seconds, for how long before
+expiring a deleted message. The default is to not have any expiration
+i.e. the existing behavior.
+you can also use the `.clean()` operation that will delete all deleted messages
+from the queue too, but using `ttl` option will automate that action for you.
+
+To auto expiry of deleted messages after 24 hours, try this:
+
+```js
+var queue = mongoDbQueue(db, 'queue', { ttl : 24 * 60 * 60 })
 ```
 
 ### deadQueue - Dead Message Queue ###
@@ -220,7 +238,7 @@ e.g.
 
 Given this message:
 
-```
+```js
 msg = {
   id: '533b1eb64ee78a57664cc76c',
   ack: 'c8a3cc585cbaaacf549d746d7db72f69',
@@ -232,7 +250,7 @@ msg = {
 If it is not acked within the `maxRetries` times, then when you receive this same message
 from the `deadQueue`, it may look like this:
 
-```
+```js
 msg = {
   id: '533b1ecf3ca3a76b667671ef',
   ack: '73872b204e3f7be84050a1ce82c5c9c0',
@@ -463,7 +481,7 @@ queue.done((err, count) => {
 
 ### .clean() ###
 
-Deletes all processed mesages from the queue. Of course, you can leave these hanging around
+Deletes all processed messages from the queue. Of course, you can leave these hanging around
 if you wish, but delete them if you no longer need them. Perhaps do this using `setInterval`
 for a regular cleaning:
 
@@ -535,11 +553,11 @@ async/await.
 
 ### 2.1.0 (2016-04-21) ###
 
-* [FIX] Fix to indexes (thanks https://github.com/ifightcrime) when lots of messages
+* [FIX] Fix to indexes (thanks <https://github.com/ifightcrime>) when lots of messages
 
 ### 2.0.0 (2014-11-12) ###
 
-* [NEW] Update MongoDB API from v1 to v2 (thanks https://github.com/hanwencheng)
+* [NEW] Update MongoDB API from v1 to v2 (thanks <https://github.com/hanwencheng>)
 
 ### 1.0.1 (2015-05-25) ###
 
@@ -547,7 +565,7 @@ async/await.
 
 ### 1.0.0 (2014-10-30) ###
 
-* [NEW] Ability to specify a visibility window when getting a message (thanks https://github.com/Gertt)
+* [NEW] Ability to specify a visibility window when getting a message (thanks <https://github.com/Gertt>)
 
 ### 0.9.1 (2014-08-28) ###
 
