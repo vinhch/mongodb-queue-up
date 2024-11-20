@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -9,7 +9,7 @@ setup(function(client, db) {
     test('visibility: check message is back in queue after 3s', function(t) {
         var queue = mongoDbQueue(db, 'visibility', { visibility : 3 })
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err) {
@@ -55,7 +55,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'visibility', { visibility : 3 })
         var originalAck
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err) {
@@ -114,7 +114,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'visibility', { visibility : 2 })
         var originalAck
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err) {

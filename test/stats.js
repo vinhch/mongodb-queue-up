@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -16,7 +16,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'stats1')
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -204,7 +204,7 @@ setup(function(client, db) {
     test('stats for a single message added, received, timed-out and back on queue', function(t) {
         var queue = mongoDbQueue(db, 'stats2', { visibility : 3 })
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {

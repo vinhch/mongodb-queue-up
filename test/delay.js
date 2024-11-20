@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -9,7 +9,7 @@ setup(function(client, db) {
     test('delay: check messages on this queue are returned after the delay', function(t) {
         var queue = mongoDbQueue(db, 'delay', { delay : 3 })
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -55,7 +55,7 @@ setup(function(client, db) {
     test('delay: check an individual message delay of type Date overrides the queue delay ', function(t) {
         var queue = mongoDbQueue(db, 'delay')
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('I am delayed by 3 seconds', { delay : new Date(Date.now() + 3000) }, function(err, id) {
@@ -101,7 +101,7 @@ setup(function(client, db) {
     test('delay: check an individual message delay overrides the queue delay', function(t) {
         var queue = mongoDbQueue(db, 'delay')
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('I am delayed by 3 seconds', { delay : 3 }, function(err, id) {

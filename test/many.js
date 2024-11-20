@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -13,7 +13,7 @@ setup(function(client, db) {
         var msgs = []
         var msgsToQueue = []
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     var i

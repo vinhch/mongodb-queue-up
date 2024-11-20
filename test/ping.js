@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -10,7 +10,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'ping', { visibility : 5 })
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -65,7 +65,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'ping', { visibility : 5 })
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -112,7 +112,7 @@ test("ping: check visibility option overrides the queue visibility", function(t)
         var queue = mongoDbQueue(db, 'ping', { visibility : 3 })
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {

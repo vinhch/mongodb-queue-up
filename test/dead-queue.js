@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -18,7 +18,7 @@ setup(function(client, db) {
         var msg
         var origId
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -98,7 +98,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'queue-2', { visibility : 1, deadQueue : deadQueue, maxRetries : 3 })
         var origId, origId2
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {

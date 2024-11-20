@@ -1,4 +1,4 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
 
 var setup = require('./setup.js')
@@ -12,7 +12,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'multi')
         var msgs = []
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     var i, done = 0

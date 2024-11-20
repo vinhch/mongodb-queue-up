@@ -1,5 +1,6 @@
-var async = require('async')
+var flow = require('async')
 var test = require('tape')
+var { sleepAsync } = require('./utils.js')
 
 var setup = require('./setup.js')
 var mongoDbQueue = require('../')
@@ -16,7 +17,7 @@ setup(function(client, db) {
         var queue = mongoDbQueue(db, 'default')
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
@@ -55,11 +56,33 @@ setup(function(client, db) {
         )
     })
 
+    test('single round trip - using async function', async function(t) {
+        let queue = mongoDbQueue(db, 'default');
+
+        let id = await queue.addAsync('Hello, World!');
+        t.ok(id, 'Received an id for this message')
+
+        let msg = await queue.getAsync();
+        console.log(msg);
+        t.ok(msg.id, 'Got a msg.id')
+        t.equal(typeof msg.id, 'string', 'msg.id is a string')
+        t.ok(msg.ack, 'Got a msg.ack')
+        t.equal(typeof msg.ack, 'string', 'msg.ack is a string')
+        t.ok(msg.tries, 'Got a msg.tries')
+        t.equal(typeof msg.tries, 'number', 'msg.tries is a number')
+        t.equal(msg.tries, 1, 'msg.tries is currently one')
+        t.equal(msg.payload, 'Hello, World!', 'Payload is correct')
+
+        let id2 = await queue.ackAsync(msg.ack);
+        t.ok(id2, 'Received an id when acking this message')
+        t.end()
+    })
+
     test("single round trip, can't be acked again", function(t) {
         var queue = mongoDbQueue(db, 'default')
         var msg
 
-        async.series(
+        flow.series(
             [
                 function(next) {
                     queue.add('Hello, World!', function(err, id) {
