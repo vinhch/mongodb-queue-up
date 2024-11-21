@@ -31,6 +31,9 @@ module.exports = function(db, name, opts) {
 
 // the Queue object itself
 function Queue(db, name, opts) {
+    // if (!client) {
+    //     throw new Error("mongodb-queue-up: provide a mongodb.MongoClient");
+    // }
     if (!db) {
         throw new Error("mongodb-queue-up: provide a mongodb.MongoClient.db");
     }
@@ -41,9 +44,16 @@ function Queue(db, name, opts) {
         throw new Error("mongodb-queue-up: provide a queue name");
     }
     opts = opts || {};
+    // this.client = client;
     this.db = db;
     this.name = name;
     this.col = db.collection(name);
+    this.transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+
     this.visibility = opts.visibility || 30;
     this.delay = opts.delay || 0;
     this.ttl = opts.ttl || null;
@@ -96,7 +106,7 @@ Queue.prototype.addAsync = async function(payload, opts) {
         });
     }
     let results = await self.col.insertMany(msgs);
-    if (payload instanceof Array) return ('' + results.insertedIds);
+    if (payload instanceof Array) return Object.values(results.insertedIds).map(x => '' + x);
     return ('' + results.insertedIds[0]);
 }
 
@@ -133,11 +143,93 @@ Queue.prototype.getAsync = async function(opts) {
         // 1) add this message to the deadQueue
         // 2) ack this message from the regular queue
         // 3) call ourself to return a new message (if exists)
-        await self.deadQueue.addAsync(msg);
-        await self.ackAsync(msg.ack);
+        await Promise.all([
+            self.deadQueue.addAsync(msg),
+            self.ackAsync(msg.ack)
+        ]);
         return self.getAsync(opts);
     }
     return msg;
+}
+
+Queue.prototype.getGenerator = async function*(limit, opts) {
+    let self = this;
+    if (!limit || limit <= 0) limit = 2;
+    /**
+     * Getting too many messages will hurt the performance
+     * and increase the chance of breaking the logic of visibility,
+     * so we limit it to 100
+     */
+    limit = limit > 100 ? 100 : limit
+    opts = opts || {};
+    let visibility = opts.visibility || self.visibility
+    let query = {
+        deleted : null,
+        visible : { $lte : now() },
+    }
+    let sort = {
+        visible : 1
+    }
+    // let projection = {'_id':1}
+    let update = {
+        $inc : { tries : 1 },
+        $set : {
+            ack     : id(),
+            visible : nowPlusSecs(visibility),
+        }
+    }
+
+    // let msgArr = [];
+    while (limit > 0){
+        let result = await self.col.findOneAndUpdate(query, update, {
+            sort: sort,
+            returnDocument : 'after',
+            includeResultMetadata: true
+        });
+        let msg = result.value;
+        // if (!msg) return msgArr;
+        if (!msg) return;
+        // convert to an external representation
+        msg = externalMessageRepresentation(msg);
+        // if we have a deadQueue, then check the tries, else don't
+        if (self.deadQueue && msg.tries > self.maxRetries) {
+            // So:
+            // 1) add this message to the deadQueue
+            // 2) ack this message from the regular queue
+            // 3) call ourself to return a new message (if exists)
+            await Promise.all([
+                self.deadQueue.addAsync(msg),
+                self.ackAsync(msg.ack)
+            ]);
+            continue;
+        }
+        // msgArr.push(msg);
+        yield msg
+        limit--;
+    }
+    // return msgArr;
+
+    // let session = self.client.startSession();
+    // try {
+    //     await session.withTransaction(async () =>{
+    //         let queueCursor = self.col.find(query, {limit,projection,session,sort});
+    //         for await (let msg of queueCursor) {
+    //             console.dir(doc);
+    //             self.col.updateOne
+    //         }
+    //     })
+    // }
+    // finally {
+    //     await session.endSession();
+    // }
+}
+
+Queue.prototype.getNAsync = async function(limit, opts) {
+    let self = this;
+    let arr = [];
+    let msgIterator = self.getGenerator(limit, opts);
+    for await(const i of msgIterator) arr.push(i);
+    return arr;
 }
 
 Queue.prototype.pingAsync = async function(ack, opts) {

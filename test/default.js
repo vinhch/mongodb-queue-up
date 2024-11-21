@@ -63,7 +63,6 @@ setup(function(client, db) {
         t.ok(id, 'Received an id for this message')
 
         let msg = await queue.getAsync();
-        console.log(msg);
         t.ok(msg.id, 'Got a msg.id')
         t.equal(typeof msg.id, 'string', 'msg.id is a string')
         t.ok(msg.ack, 'Got a msg.ack')
