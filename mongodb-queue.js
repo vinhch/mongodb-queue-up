@@ -379,8 +379,8 @@ Queue.prototype.killAsync = async function(msg) {
 // automatically build the old callback style functions
 const fnNameAsyncArr = Object.getOwnPropertyNames(Queue.prototype)
     .filter(x => x.endsWith('Async'));
-for (let nameAsync of fnNameAsyncArr) {
-    let name = nameAsync.slice(0, -5);
+for (const nameAsync of fnNameAsyncArr) {
+    const name = nameAsync.slice(0, -5);
     Object.defineProperty(Queue.prototype, name, {
         value: callbackify(function(...args) {
             let self = this;
